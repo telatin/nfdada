@@ -42,11 +42,12 @@ process TAXONOMY {
     
     output:
     path("taxonomy.tsv")
+    path("rep-seqs-tax.fasta"), emit: fasta
   
     
     script:
     """
-    dadaist2-assigntax -i rep-seqs.fasta -r $db  -o taxonomy/ -t ${task.cpus}
+    dadaist2-assigntax -i rep-seqs.fasta -r $db  -o taxonomy/ -f rep-seqs-tax.fasta -t ${task.cpus}
     mv taxonomy/taxonomy.tsv .
     """
     stub:

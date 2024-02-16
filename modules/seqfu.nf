@@ -23,6 +23,29 @@ process SEQFU_QUAL {
     """
 }
 
+process METADATA {
+    conda "bioconda::seqfu=1.20.3"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/seqfu:1.20.3--h1eb128b_0' :
+        'biocontainers/seqfu:1.20.3--h1eb128b_0' }"
+
+    
+    input:
+    path(reads) 
+ 
+    output:
+    path("metadata.tsv")
+    
+    script:
+    """
+    seqfu metadata -f dadaist . > metadata.tsv
+    """
+    stub:
+    """
+    touch fwd.txt rev.txt
+    """
+}
+
 process ZERO_TRIM {
     conda "bioconda::seqfu=1.20.3"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

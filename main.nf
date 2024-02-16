@@ -16,7 +16,7 @@ include { make_input } from './lib/utils'
   the program more readable (this is of course not mandatory)
 */
 include { CUTADAPT } from './modules/cutadapt.nf'
-include { SEQFU_QUAL; ZERO_TRIM } from './modules/seqfu.nf'
+include { SEQFU_QUAL; ZERO_TRIM; METADATA } from './modules/seqfu.nf'
 include { RUNDADA; TAXONOMY; EXPORT_DADA } from './modules/dadaist.nf'
 /* 
  *   DSL2 allows to reuse channels
@@ -31,7 +31,7 @@ if (params.verbose) {
 }
 // Print help message, supply typical command line usage for the pipeline
 if (params.help) {
-   log.info paramsHelp("nextflow quadram-institute-bioscience/nextflow-example --input input_file.csv")
+   log.info paramsHelp("...")
    exit 0
 }
 
@@ -51,7 +51,7 @@ workflow {
         CUTADAPT(reads, params.fwdprimer, params.revprimer)
         ch_reads = CUTADAPT.out.reads
     }
-    
+    METADATA(ch_reads.map{it -> it[1]}.collect())
     if (params.skip_trim) {
         ZERO_TRIM(ch_reads.map{it -> it[1]}.collect())
         ch_trim = ZERO_TRIM.out
